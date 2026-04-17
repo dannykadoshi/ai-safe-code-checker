@@ -4,7 +4,7 @@
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Try_It_Now-e91e8c?style=for-the-badge&logo=googlechrome&logoColor=white)](https://dannykadoshi.github.io/ai-safe-code-checker/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Powered by Gemini](https://img.shields.io/badge/Powered_by-Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Powered by Groq](https://img.shields.io/badge/Powered_by-Groq_Llama_3.3-f55036?style=for-the-badge&logo=groq&logoColor=white)](https://groq.com)
 [![No Backend](https://img.shields.io/badge/No_Backend-100%25_Client_Side-blueviolet?style=for-the-badge)](https://dannykadoshi.github.io/ai-safe-code-checker/)
 
 **Paste your code. Get an instant AI-powered security report. No signup, no installation, no data stored.**
@@ -17,7 +17,7 @@
 
 ## What It Does
 
-AI Safe Code Checker scans your code for security vulnerabilities using Google Gemini AI and returns a prioritized report with:
+AI Safe Code Checker scans your code for security vulnerabilities using Groq's Llama 3.3 70B model and returns a prioritized report with:
 
 - **Security score** (0–100) with visual indicator
 - **Severity-rated issues** — Critical / High / Medium / Low / Info
@@ -54,7 +54,7 @@ Python · JavaScript · TypeScript · PHP · Java · Go · Rust · C/C++ · Ruby
 
 ## How To Use
 
-1. **Get a free Gemini API key** at [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) (no credit card needed)
+1. **Get a free Groq API key** at [console.groq.com/keys](https://console.groq.com/keys) (no credit card needed — works in EU/EEA)
 2. **Open the tool** at [dannykadoshi.github.io/ai-safe-code-checker](https://dannykadoshi.github.io/ai-safe-code-checker/)
 3. **Paste your API key** into the field at the top (saved to your browser only)
 4. **Paste your code** and select the language
