@@ -103,7 +103,7 @@
 
         .api-key-wrap {
             display: flex; align-items: center; gap: 0.75rem;
-            flex: 1; max-width: 420px;
+            flex: 1; max-width: 520px;
         }
         .api-key-label {
             font-size: 0.75rem; font-family: 'Fira Code', monospace;
@@ -457,13 +457,19 @@
             <span class="logo-text">AI Safe <span>Code</span> Checker</span>
         </a>
         <div class="api-key-wrap">
-            <span class="api-key-label">Groq API Key:</span>
+            <select class="provider-select" id="provider-select" onchange="onProviderChange()">
+                <option value="groq">Groq</option>
+                <option value="openrouter">OpenRouter</option>
+                <option value="cerebras">Cerebras</option>
+                <option value="mistral">Mistral</option>
+            </select>
+            <span class="api-key-label" id="api-key-label">API Key:</span>
             <input type="password" class="api-key-input" id="api-key"
                    placeholder="Paste your key (stored locally only)"
                    oninput="saveKey()">
         </div>
         <div class="header-links">
-            <a href="https://console.groq.com/keys" target="_blank" rel="noopener" class="header-link" id="get-key-link">
+            <a href="get-key.html" class="header-link">
                 <i class="fas fa-key"></i> Get free API key
             </a>
             <a href="https://github.com/dannykadoshi/ai-safe-code-checker" target="_blank" rel="noopener" class="header-link">
@@ -478,7 +484,7 @@
 
 <!-- HERO -->
 <div class="hero">
-    <div class="hero-badge"><i class="fas fa-bolt"></i> Powered by Groq · Llama 3.3 70B</div>
+    <div class="hero-badge"><i class="fas fa-bolt"></i> Groq · OpenRouter · Cerebras · Mistral — your choice</div>
     <h1>Scan Your Code for <span>Security Risks</span></h1>
     <p>Paste any code snippet and get instant vulnerability analysis, severity ratings, and actionable fix suggestions. Free, open-source, no signup.</p>
     <div class="hero-stats">
@@ -571,7 +577,7 @@
             <div class="step-num">1</div>
             <div class="step-icon">🔑</div>
             <h3>Add Your API Key</h3>
-            <p>Get a free Groq API key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--pink)">console.groq.com/keys</a>. No credit card needed. Stored only in your browser — never on any server.</p>
+            <p>Choose your AI provider from the dropdown and get a free API key — no credit card needed for any of them. Stored only in your browser. <a href="get-key.html" style="color:var(--pink)">See all options →</a></p>
         </div>
         <div class="step">
             <div class="step-num">2</div>
@@ -599,7 +605,7 @@
     <p>
         Built by <a href="https://github.com/dannykadoshi" target="_blank">Danni Kadoshi</a> ·
         Open source on <a href="https://github.com/dannykadoshi/ai-safe-code-checker" target="_blank">GitHub</a> ·
-        Powered by <a href="https://groq.com" target="_blank">Groq</a> ·
+        Powered by <a href="get-key.html">Groq · OpenRouter · Cerebras · Mistral</a> ·
         Your code never leaves your browser
     </p>
 </footer>
@@ -621,10 +627,58 @@
         document.getElementById('theme-icon').className = t === 'light' ? 'fas fa-sun' : 'fas fa-moon';
     })();
 
-    // ── PROVIDER + API KEY ────────────────────────────────
-    const keyInput = document.getElementById('api-key');
-    keyInput.value = localStorage.getItem('groq_key') || '';
-    function saveKey() { localStorage.setItem('groq_key', keyInput.value.trim()); }
+    // ── PROVIDERS ─────────────────────────────────────────
+    const PROVIDERS = {
+        groq: {
+            name:     'Groq',
+            keyStore: 'key_groq',
+            endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+            model:    'llama-3.3-70b-versatile',
+            extra:    {}
+        },
+        openrouter: {
+            name:     'OpenRouter',
+            keyStore: 'key_openrouter',
+            endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+            model:    'meta-llama/llama-3.1-8b-instruct:free',
+            extra:    { 'HTTP-Referer': 'https://dannykadoshi.github.io/ai-safe-code-checker/', 'X-Title': 'AI Safe Code Checker' }
+        },
+        cerebras: {
+            name:     'Cerebras',
+            keyStore: 'key_cerebras',
+            endpoint: 'https://api.cerebras.ai/v1/chat/completions',
+            model:    'llama3.1-70b',
+            extra:    {}
+        },
+        mistral: {
+            name:     'Mistral',
+            keyStore: 'key_mistral',
+            endpoint: 'https://api.mistral.ai/v1/chat/completions',
+            model:    'mistral-small-latest',
+            extra:    {}
+        }
+    };
+
+    const providerSelect = document.getElementById('provider-select');
+    const keyLabel       = document.getElementById('api-key-label');
+    const keyInput       = document.getElementById('api-key');
+
+    function getProvider() { return PROVIDERS[providerSelect.value]; }
+
+    function onProviderChange() {
+        const p = getProvider();
+        keyLabel.textContent = p.name + ' Key:';
+        keyInput.value = localStorage.getItem(p.keyStore) || '';
+        localStorage.setItem('last_provider', providerSelect.value);
+    }
+
+    // Restore saved provider
+    providerSelect.value = localStorage.getItem('last_provider') || 'groq';
+    onProviderChange();
+
+    function saveKey() {
+        localStorage.setItem(getProvider().keyStore, keyInput.value.trim());
+    }
 
     // ── CHAR COUNT ────────────────────────────────────────
     function updateCharCount() {
@@ -783,25 +837,27 @@ ${code}
 \`\`\``;
 
         try {
-            const apiKey = localStorage.getItem('groq_key') || '';
+            const p      = getProvider();
+            const apiKey = localStorage.getItem(p.keyStore) || '';
 
             if (!apiKey) {
-                showError('Please paste your Groq API key at the top of the page. <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--pink)">Get a free key →</a>');
+                showError(`Please paste your ${p.name} API key at the top of the page. <a href="get-key.html" style="color:var(--pink)">How to get a free key →</a>`);
                 setLoading(false);
                 return;
             }
 
-            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            const res = await fetch(p.endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
+                    'Authorization': `Bearer ${apiKey}`,
+                    ...p.extra
                 },
                 body: JSON.stringify({
-                    model: 'llama-3.3-70b-versatile',
-                    messages: [{ role: 'user', content: prompt }],
+                    model:       p.model,
+                    messages:    [{ role: 'user', content: prompt }],
                     temperature: 0.2,
-                    max_tokens: 4096
+                    max_tokens:  4096
                 })
             });
 
@@ -816,7 +872,7 @@ ${code}
                 setLoading(false);
 
                 if (httpCode === 401 || httpCode === 403) {
-                    showError('<strong>Invalid API key</strong><br>Check your Groq key or get a new one at <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.groq.com/keys</a>');
+                    showError(`<strong>Invalid API key</strong><br>${apiMsg}<br><br><a href="get-key.html" style="color:inherit;text-decoration:underline">Get a free ${p.name} key →</a>`);
                     return;
                 }
                 if (httpCode === 429) {
@@ -988,7 +1044,7 @@ ${code}
             document.getElementById('results-inner').innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon"><i class="fas fa-circle-notch fa-spin"></i></div>
-                    <p>Analyzing your code with Groq AI...</p>
+                    <p>Analyzing your code with ${getProvider().name}...</p>
                 </div>`;
             document.getElementById('results-actions').style.display = 'none';
         }
@@ -1006,8 +1062,8 @@ ${code}
         el.innerHTML = `
             <div class="error-state" id="rate-limit-msg">
                 <i class="fas fa-clock"></i>
-                Groq rate limit hit. Retrying automatically in <strong id="rl-countdown">${remaining}s</strong>…
-                <br><small style="opacity:0.6;margin-top:0.4rem;display:block">Free tier allows ~30 requests/min. Upgrade at <a href="https://console.groq.com" target="_blank" rel="noopener" style="color:inherit">console.groq.com</a> for higher limits.</small>
+                Rate limit hit. Retrying automatically in <strong id="rl-countdown">${remaining}s</strong>…
+                <br><small style="opacity:0.6;margin-top:0.4rem;display:block">Free tier has request limits. Try switching providers from the dropdown if this keeps happening.</small>
             </div>`;
         document.getElementById('results-actions').style.display = 'none';
         const tick = setInterval(() => {

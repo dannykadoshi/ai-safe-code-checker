@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get a Free API Key — AI Safe Code Checker</title>
+    <meta name="description" content="How to get a free API key for AI Safe Code Checker. Choose from Groq, OpenRouter, Cerebras, or Mistral — all free, no credit card needed.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root, [data-theme="dark"] {
+            --bg:        #0d0d14;
+            --bg2:       #13131f;
+            --bg3:       #1a1a2e;
+            --card:      rgba(255,255,255,0.04);
+            --border:    rgba(255,255,255,0.08);
+            --pink:      #e91e8c;
+            --pink-glow: rgba(233,30,140,0.2);
+            --text:      #e8e8f5;
+            --muted:     #8888aa;
+            --header-bg: rgba(13,13,20,0.9);
+            --radius:    12px;
+        }
+        [data-theme="light"] {
+            --bg:        #f4f4f8;
+            --bg2:       #ffffff;
+            --bg3:       #eaeaf0;
+            --card:      rgba(0,0,0,0.03);
+            --border:    rgba(0,0,0,0.09);
+            --pink:      #e91e8c;
+            --pink-glow: rgba(233,30,140,0.15);
+            --text:      #1a1a2e;
+            --muted:     #666680;
+            --header-bg: rgba(244,244,248,0.92);
+        }
+
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+        /* HEADER */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--header-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .logo-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--pink), #7c3aed); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; }
+        .logo-text { font-weight: 700; font-size: 1rem; color: var(--text); }
+        .logo-text span { color: var(--pink); }
+        .header-right { display: flex; gap: 1rem; align-items: center; }
+        .back-link { color: var(--muted); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+        .back-link:hover { color: var(--pink); }
+        .theme-toggle { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.7rem; color: var(--muted); cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .theme-toggle:hover { border-color: var(--pink); color: var(--pink); }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 100px; padding: 0.35rem 1rem;
+            font-size: 0.78rem; color: var(--muted); margin-bottom: 1.5rem;
+        }
+        .hero-badge i { color: var(--pink); }
+        .hero h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+        .hero h1 span { color: var(--pink); }
+        .hero p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto 2rem; line-height: 1.7; }
+        .free-pills { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
+        .free-pill {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+            border-radius: 100px; padding: 0.3rem 0.9rem;
+            font-size: 0.8rem; color: #22c55e; font-weight: 500;
+        }
+        .free-pill i { font-size: 0.7rem; }
+
+        /* CARDS */
+        .cards-section { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 5rem; display: flex; flex-direction: column; gap: 2rem; }
+
+        .provider-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .provider-card:hover { border-color: var(--provider-color, var(--pink)); box-shadow: 0 0 40px var(--provider-glow, var(--pink-glow)); }
+
+        .card-header {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1.5rem 2rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .provider-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0;
+            background: var(--provider-bg, rgba(233,30,140,0.12));
+            color: var(--provider-color, var(--pink));
+        }
+        .card-title-wrap { flex: 1; }
+        .card-provider-name { font-size: 1.2rem; font-weight: 800; color: var(--text); }
+        .card-tagline { font-size: 0.82rem; color: var(--muted); margin-top: 0.1rem; }
+        .card-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .badge {
+            font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem;
+            border-radius: 100px; border: 1px solid;
+        }
+        .badge-free { color: #22c55e; border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.08); }
+        .badge-eu   { color: #3b82f6; border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.08); }
+        .badge-fast { color: #f59e0b; border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
+        .badge-models { color: #a78bfa; border-color: rgba(167,139,250,0.35); background: rgba(167,139,250,0.08); }
+
+        .card-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+
+        .card-info { padding: 1.5rem 2rem; border-right: 1px solid var(--border); }
+        .info-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.8rem; }
+        .info-desc { font-size: 0.88rem; color: var(--text); line-height: 1.65; margin-bottom: 1.2rem; }
+        .limits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+        .limit-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; }
+        .limit-val { font-size: 1rem; font-weight: 800; color: var(--provider-color, var(--pink)); font-family: 'Fira Code', monospace; }
+        .limit-key { font-size: 0.68rem; color: var(--muted); margin-top: 0.1rem; }
+
+        .card-steps { padding: 1.5rem 2rem; }
+        .steps-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.8rem; }
+        .step-item { display: flex; gap: 0.85rem; align-items: flex-start; margin-bottom: 0.9rem; }
+        .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--provider-color, var(--pink)); color: #fff; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+        .step-text { font-size: 0.85rem; color: var(--text); line-height: 1.5; }
+        .step-text a { color: var(--provider-color, var(--pink)); text-decoration: none; }
+        .step-text a:hover { text-decoration: underline; }
+        .step-text code { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 0.1rem 0.4rem; font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+
+        .card-footer-row {
+            padding: 1.2rem 2rem;
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .model-used { font-size: 0.78rem; color: var(--muted); font-family: 'Fira Code', monospace; }
+        .model-used span { color: var(--text); }
+        .cta-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.6rem 1.4rem; border-radius: 9px;
+            background: var(--provider-color, var(--pink));
+            color: #fff; font-weight: 700; font-size: 0.85rem;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.25s ease; white-space: nowrap;
+        }
+        .cta-btn:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 20px var(--provider-glow, var(--pink-glow)); }
+
+        /* BOTTOM NOTE */
+        .bottom-note {
+            text-align: center; max-width: 600px; margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+        .bottom-note h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+        .bottom-note p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+        .bottom-note a { color: var(--pink); text-decoration: none; }
+        .bottom-note a:hover { text-decoration: underline; }
+
+        /* FOOTER */
+        footer { text-align: center; padding: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+        footer a { color: var(--pink); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 700px) {
+            .hero h1 { font-size: 1.7rem; }
+            .card-body { grid-template-columns: 1fr; }
+            .card-info { border-right: none; border-bottom: 1px solid var(--border); }
+            .card-footer-row { flex-direction: column; align-items: flex-start; }
+            .cards-section { padding: 2rem 1rem 4rem; }
+            .card-header { padding: 1.2rem 1.2rem 1rem; }
+            .card-info, .card-steps { padding: 1.2rem; }
+            .cta-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-shield-halved"></i></div>
+        <span class="logo-text">AI Safe <span>Code</span> Checker</span>
+    </a>
+    <div class="header-right">
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to tool</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+    </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-badge"><i class="fas fa-key"></i> Free API Keys</div>
+    <h1>Get Your <span>Free</span> API Key</h1>
+    <p>All four providers below offer a genuine free tier — no credit card required. Pick any one, paste the key into the tool, and start scanning code.</p>
+    <div class="free-pills">
+        <span class="free-pill"><i class="fas fa-circle-check"></i> No credit card</span>
+        <span class="free-pill"><i class="fas fa-circle-check"></i> Works in EU/EEA</span>
+        <span class="free-pill"><i class="fas fa-circle-check"></i> Key stored only in your browser</span>
+        <span class="free-pill"><i class="fas fa-circle-check"></i> Switch providers anytime</span>
+    </div>
+</div>
+
+<div class="cards-section">
+
+    <!-- ── GROQ ── -->
+    <div class="provider-card" style="--provider-color:#f55036;--provider-glow:rgba(245,80,54,0.2);--provider-bg:rgba(245,80,54,0.1)">
+        <div class="card-header">
+            <div class="provider-icon"><i class="fas fa-bolt"></i></div>
+            <div class="card-title-wrap">
+                <div class="card-provider-name">Groq</div>
+                <div class="card-tagline">Fastest inference available — runs Llama 3.3 70B at lightning speed</div>
+            </div>
+            <div class="card-badges">
+                <span class="badge badge-free">Free tier</span>
+                <span class="badge badge-eu">Works in EU</span>
+                <span class="badge badge-fast">Very fast</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-info">
+                <div class="info-label">About Groq</div>
+                <p class="info-desc">Groq builds custom hardware (LPUs) specifically for AI inference — it's noticeably faster than GPU-based providers. Their free tier is generous and has no EU restrictions. Recommended as your first choice.</p>
+                <div class="limits-grid">
+                    <div class="limit-item"><div class="limit-val">30</div><div class="limit-key">Requests / min</div></div>
+                    <div class="limit-item"><div class="limit-val">1,000</div><div class="limit-key">Requests / day</div></div>
+                    <div class="limit-item"><div class="limit-val">6,000</div><div class="limit-key">Tokens / min</div></div>
+                    <div class="limit-item"><div class="limit-val">Free</div><div class="limit-key">No credit card</div></div>
+                </div>
+            </div>
+            <div class="card-steps">
+                <div class="steps-label">How to get your key</div>
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Go to <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a> and sign up with Google or email</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">In the left sidebar, click <strong>API Keys</strong> → <strong>Create API Key</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Copy the key (starts with <code>gsk_</code>)</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-text">Back in the tool, select <strong>Groq</strong> from the dropdown and paste your key</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer-row">
+            <div class="model-used">Model used: <span>llama-3.3-70b-versatile</span></div>
+            <a href="https://console.groq.com/keys" target="_blank" rel="noopener" class="cta-btn">
+                <i class="fas fa-external-link-alt"></i> Get Groq API Key
+            </a>
+        </div>
+    </div>
+
+    <!-- ── OPENROUTER ── -->
+    <div class="provider-card" style="--provider-color:#7c3aed;--provider-glow:rgba(124,58,237,0.2);--provider-bg:rgba(124,58,237,0.1)">
+        <div class="card-header">
+            <div class="provider-icon"><i class="fas fa-shuffle"></i></div>
+            <div class="card-title-wrap">
+                <div class="card-provider-name">OpenRouter</div>
+                <div class="card-tagline">One key, access to 100+ models — some completely free, others pay-per-use</div>
+            </div>
+            <div class="card-badges">
+                <span class="badge badge-free">Free models</span>
+                <span class="badge badge-eu">Works in EU</span>
+                <span class="badge badge-models">100+ models</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-info">
+                <div class="info-label">About OpenRouter</div>
+                <p class="info-desc">OpenRouter is a router — it gives you one API key that works across many AI providers (OpenAI, Anthropic, Meta, Mistral, and more). Models marked <code>:free</code> are completely free with no billing required. Great if you want to experiment with different models.</p>
+                <div class="limits-grid">
+                    <div class="limit-item"><div class="limit-val">20</div><div class="limit-key">Free req / min</div></div>
+                    <div class="limit-item"><div class="limit-val">200</div><div class="limit-key">Free req / day</div></div>
+                    <div class="limit-item"><div class="limit-val">100+</div><div class="limit-key">Models available</div></div>
+                    <div class="limit-item"><div class="limit-val">Free</div><div class="limit-key">:free models</div></div>
+                </div>
+            </div>
+            <div class="card-steps">
+                <div class="steps-label">How to get your key</div>
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Go to <a href="https://openrouter.ai" target="_blank" rel="noopener">openrouter.ai</a> and click <strong>Sign In</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">After signing in, go to <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a> and click <strong>Create Key</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Copy the key (starts with <code>sk-or-</code>)</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-text">Select <strong>OpenRouter</strong> from the dropdown in the tool and paste your key</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer-row">
+            <div class="model-used">Model used: <span>meta-llama/llama-3.1-8b-instruct:free</span></div>
+            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener" class="cta-btn">
+                <i class="fas fa-external-link-alt"></i> Get OpenRouter API Key
+            </a>
+        </div>
+    </div>
+
+    <!-- ── CEREBRAS ── -->
+    <div class="provider-card" style="--provider-color:#06b6d4;--provider-glow:rgba(6,182,212,0.2);--provider-bg:rgba(6,182,212,0.1)">
+        <div class="card-header">
+            <div class="provider-icon"><i class="fas fa-microchip"></i></div>
+            <div class="card-title-wrap">
+                <div class="card-provider-name">Cerebras</div>
+                <div class="card-tagline">Purpose-built AI chips — extremely fast, generous free tier, Llama 3.1 70B</div>
+            </div>
+            <div class="card-badges">
+                <span class="badge badge-free">Free tier</span>
+                <span class="badge badge-eu">Works in EU</span>
+                <span class="badge badge-fast">Extremely fast</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-info">
+                <div class="info-label">About Cerebras</div>
+                <p class="info-desc">Cerebras built the world's largest AI chip — their hardware runs Llama models at speeds that rival or beat Groq. Their free tier is very generous and works globally including the EU. A great alternative if Groq hits its daily limit.</p>
+                <div class="limits-grid">
+                    <div class="limit-item"><div class="limit-val">60</div><div class="limit-key">Requests / min</div></div>
+                    <div class="limit-item"><div class="limit-val">1,000</div><div class="limit-key">Requests / day</div></div>
+                    <div class="limit-item"><div class="limit-val">100k</div><div class="limit-key">Tokens / min</div></div>
+                    <div class="limit-item"><div class="limit-val">Free</div><div class="limit-key">No credit card</div></div>
+                </div>
+            </div>
+            <div class="card-steps">
+                <div class="steps-label">How to get your key</div>
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Go to <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener">cloud.cerebras.ai</a> and create a free account</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Once logged in, click <strong>API Keys</strong> in the left menu → <strong>Create new key</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Copy your key (starts with <code>csk-</code>)</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-text">Select <strong>Cerebras</strong> from the dropdown in the tool and paste your key</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer-row">
+            <div class="model-used">Model used: <span>llama3.1-70b</span></div>
+            <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener" class="cta-btn">
+                <i class="fas fa-external-link-alt"></i> Get Cerebras API Key
+            </a>
+        </div>
+    </div>
+
+    <!-- ── MISTRAL ── -->
+    <div class="provider-card" style="--provider-color:#ff7000;--provider-glow:rgba(255,112,0,0.2);--provider-bg:rgba(255,112,0,0.1)">
+        <div class="card-header">
+            <div class="provider-icon"><i class="fas fa-fire"></i></div>
+            <div class="card-title-wrap">
+                <div class="card-provider-name">Mistral AI</div>
+                <div class="card-tagline">European AI company — strong multilingual models, GDPR-compliant, EU-hosted</div>
+            </div>
+            <div class="card-badges">
+                <span class="badge badge-free">Free tier</span>
+                <span class="badge badge-eu">EU hosted</span>
+                <span class="badge badge-models">GDPR compliant</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-info">
+                <div class="info-label">About Mistral AI</div>
+                <p class="info-desc">Mistral AI is a French company building high-quality open-weight models. Their infrastructure is hosted in Europe, making them a strong choice for users concerned about data sovereignty and GDPR compliance. <code>mistral-small-latest</code> is their most capable free model.</p>
+                <div class="limits-grid">
+                    <div class="limit-item"><div class="limit-val">1</div><div class="limit-key">Request / sec</div></div>
+                    <div class="limit-item"><div class="limit-val">500k</div><div class="limit-key">Tokens / month</div></div>
+                    <div class="limit-item"><div class="limit-val">EU</div><div class="limit-key">Data hosted in EU</div></div>
+                    <div class="limit-item"><div class="limit-val">Free</div><div class="limit-key">No credit card</div></div>
+                </div>
+            </div>
+            <div class="card-steps">
+                <div class="steps-label">How to get your key</div>
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Go to <a href="https://console.mistral.ai" target="_blank" rel="noopener">console.mistral.ai</a> and create a free account</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">In the dashboard, go to <strong>API Keys</strong> → <strong>Create new key</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Copy your key (long alphanumeric string)</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-text">Select <strong>Mistral</strong> from the dropdown in the tool and paste your key</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer-row">
+            <div class="model-used">Model used: <span>mistral-small-latest</span></div>
+            <a href="https://console.mistral.ai/api-keys" target="_blank" rel="noopener" class="cta-btn">
+                <i class="fas fa-external-link-alt"></i> Get Mistral API Key
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- BOTTOM NOTE -->
+<div class="bottom-note">
+    <h3>Which one should I use?</h3>
+    <p>
+        Start with <strong>Groq</strong> — it's the fastest and most reliable free option.
+        If you hit the daily limit, switch to <strong>Cerebras</strong> as a backup.
+        Use <strong>OpenRouter</strong> if you want to explore different models.
+        Choose <strong>Mistral</strong> if EU data hosting matters to you.
+        <br><br>
+        You can save a key for each provider — the tool remembers all of them.
+        <br><br>
+        <a href="index.html">← Back to the code checker</a>
+    </p>
+</div>
+
+<footer>
+    <p>
+        <a href="index.html">AI Safe Code Checker</a> ·
+        Built by <a href="https://github.com/dannykadoshi" target="_blank">Danni Kadoshi</a> ·
+        <a href="https://github.com/dannykadoshi/ai-safe-code-checker" target="_blank">GitHub</a>
+    </p>
+</footer>
+
+<script>
+    (function() {
+        const t = localStorage.getItem('checker_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        document.getElementById('theme-icon').className = t === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+    })();
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        document.getElementById('theme-icon').className = next === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+        localStorage.setItem('checker_theme', next);
+    }
+</script>
+</body>
+</html>
