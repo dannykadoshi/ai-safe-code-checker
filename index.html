@@ -244,6 +244,14 @@
             border-color: var(--pink); color: var(--pink);
             background: rgba(233,30,140,0.07);
         }
+        .example-btn--secure {
+            border-color: rgba(34,197,94,0.4); color: #22c55e;
+            background: rgba(34,197,94,0.07);
+        }
+        .example-btn--secure:hover {
+            border-color: #22c55e; color: #22c55e;
+            background: rgba(34,197,94,0.14);
+        }
 
         /* analyze button */
         .analyze-bar {
@@ -536,6 +544,7 @@
             <button class="example-btn" onclick="loadExample('xss')">XSS</button>
             <button class="example-btn" onclick="loadExample('secrets')">Hardcoded Secrets</button>
             <button class="example-btn" onclick="loadExample('auth')">Broken Auth</button>
+            <button class="example-btn example-btn--secure" onclick="loadExample('secure')">✓ Secure Code</button>
         </div>
 
         <div class="analyze-bar">
@@ -774,6 +783,106 @@ const JWT_SECRET = 'secret';
 function resetToken(email) {
     return email + Date.now().toString().slice(-4);
 }`
+        },
+        secure: {
+            lang: 'python',
+            code: `"""
+Secure user authentication endpoint — Python / Flask
+Demonstrates: parameterized queries, password hashing, input validation,
+rate limiting, secure session config, environment-based secrets.
+"""
+import os
+import re
+import bcrypt
+import secrets
+from flask import Flask, request, jsonify, session
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+app = Flask(__name__)
+
+# Secrets loaded from environment — never hardcoded
+app.secret_key = os.environ['FLASK_SECRET_KEY']
+DATABASE_URL    = os.environ['DATABASE_URL']
+
+# Secure session cookie settings
+app.config.update(
+    SESSION_COOKIE_HTTPONLY = True,
+    SESSION_COOKIE_SECURE   = True,
+    SESSION_COOKIE_SAMESITE = 'Strict',
+    PERMANENT_SESSION_LIFETIME = 1800,  # 30 min
+)
+
+# Rate limiting: max 5 login attempts per minute per IP
+limiter = Limiter(get_remote_address, app=app, default_limits=[])
+
+def get_db():
+    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+
+def validate_email(email: str) -> bool:
+    return bool(re.fullmatch(r'[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}', email))
+
+def validate_password(password: str) -> bool:
+    # Min 8 chars, at least one uppercase, one digit, one special char
+    return bool(re.fullmatch(r'(?=.*[A-Z])(?=.*\\d)(?=.*[^\\w]).{8,}', password))
+
+@app.post('/register')
+def register():
+    data = request.get_json(silent=True) or {}
+    email    = str(data.get('email', '')).strip().lower()
+    password = str(data.get('password', ''))
+
+    # Input validation
+    if not validate_email(email):
+        return jsonify({'error': 'Invalid email format'}), 400
+    if not validate_password(password):
+        return jsonify({'error': 'Password must be 8+ chars with uppercase, digit, and special character'}), 400
+
+    # Hash password with bcrypt (auto-salted)
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12))
+
+    # Parameterized query — no SQL injection possible
+    try:
+        with get_db() as conn, conn.cursor() as cur:
+            cur.execute(
+                'INSERT INTO users (email, password_hash) VALUES (%s, %s)',
+                (email, hashed.decode())
+            )
+        return jsonify({'message': 'Account created'}), 201
+    except psycopg2.errors.UniqueViolation:
+        # Generic message — don't reveal whether email exists
+        return jsonify({'message': 'Account created'}), 201
+
+@app.post('/login')
+@limiter.limit('5 per minute')
+def login():
+    data = request.get_json(silent=True) or {}
+    email    = str(data.get('email', '')).strip().lower()
+    password = str(data.get('password', ''))
+
+    if not email or not password:
+        return jsonify({'error': 'Missing credentials'}), 400
+
+    with get_db() as conn, conn.cursor() as cur:
+        cur.execute('SELECT id, password_hash FROM users WHERE email = %s', (email,))
+        user = cur.fetchone()
+
+    # Constant-time check prevents timing attacks
+    dummy_hash = b'$2b$12$' + b'x' * 53
+    stored = user['password_hash'].encode() if user else dummy_hash
+    match  = bcrypt.checkpw(password.encode(), stored)
+
+    if not user or not match:
+        return jsonify({'error': 'Invalid credentials'}), 401
+
+    # Regenerate session ID on login to prevent fixation
+    session.clear()
+    session['user_id'] = user['id']
+    session['token']   = secrets.token_hex(32)
+
+    return jsonify({'message': 'Login successful'}), 200`
         }
     };
 
