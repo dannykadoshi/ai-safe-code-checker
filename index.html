@@ -797,10 +797,21 @@ ${code}
                 const msg = errData?.error?.message || `API error ${res.status}`;
                 if (res.status === 400) throw new Error('Invalid API key. Please check your key and try again.');
                 if (res.status === 429) {
-                    // Parse Retry-After header if present, otherwise default to 20s
-                    const retryAfter = parseInt(res.headers.get('Retry-After') || '20', 10);
                     setLoading(false);
-                    showRateLimit(retryAfter);
+                    const apiMsg = (errData?.error?.message || '').toLowerCase();
+                    // Daily quota exhausted — retrying won't help
+                    if (apiMsg.includes('quota') || apiMsg.includes('resource') || apiMsg.includes('exhausted')) {
+                        showError(
+                            'Daily quota exceeded for this API key. The free tier allows 1,500 requests/day per project.' +
+                            '<br><br>To fix this:<br>' +
+                            '&nbsp;&nbsp;1. Wait until midnight Pacific time for the quota to reset.<br>' +
+                            '&nbsp;&nbsp;2. Or <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">generate a fresh API key</a> in a new Google Cloud project.'
+                        );
+                    } else {
+                        // Per-minute rate limit — auto-retry after cooldown
+                        const retryAfter = parseInt(res.headers.get('Retry-After') || '20', 10);
+                        showRateLimit(retryAfter);
+                    }
                     return;
                 }
                 throw new Error(msg);
