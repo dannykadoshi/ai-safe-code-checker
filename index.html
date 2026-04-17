@@ -794,27 +794,38 @@ ${code}
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
-                const msg = errData?.error?.message || `API error ${res.status}`;
-                if (res.status === 400) throw new Error('Invalid API key. Please check your key and try again.');
-                if (res.status === 429) {
-                    setLoading(false);
-                    const apiMsg = (errData?.error?.message || '').toLowerCase();
-                    // Daily quota exhausted — retrying won't help
-                    if (apiMsg.includes('quota') || apiMsg.includes('resource') || apiMsg.includes('exhausted')) {
+                const apiMsg   = errData?.error?.message || '';
+                const apiStatus = errData?.error?.status  || '';
+                const httpCode  = res.status;
+                setLoading(false);
+
+                if (httpCode === 400) {
+                    showError(`<strong>400 — Bad Request</strong><br>${apiMsg || 'Invalid request. Check your API key and try again.'}`);
+                    return;
+                }
+                if (httpCode === 401 || httpCode === 403) {
+                    showError(`<strong>${httpCode} — API key rejected</strong><br>${apiMsg || 'Your API key is invalid or does not have access to the Generative Language API.'}<br><br>Make sure you enabled the API at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">aistudio.google.com/app/apikey</a>.`);
+                    return;
+                }
+                if (httpCode === 429) {
+                    const msgLow = apiMsg.toLowerCase();
+                    const isQuota = msgLow.includes('quota') || msgLow.includes('resource') || apiStatus === 'RESOURCE_EXHAUSTED';
+                    if (isQuota) {
                         showError(
-                            'Daily quota exceeded for this API key. The free tier allows 1,500 requests/day per project.' +
-                            '<br><br>To fix this:<br>' +
-                            '&nbsp;&nbsp;1. Wait until midnight Pacific time for the quota to reset.<br>' +
-                            '&nbsp;&nbsp;2. Or <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">generate a fresh API key</a> in a new Google Cloud project.'
+                            `<strong>Quota exceeded</strong> — Google says: <em>"${apiMsg}"</em>` +
+                            '<br><br>Even a brand-new key shares the quota of the Google Cloud project it belongs to. ' +
+                            'If the project was used before, the daily quota may already be gone.' +
+                            '<br><br><strong>Fix:</strong> go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">aistudio.google.com/app/apikey</a>, ' +
+                            'click <em>"Create API key"</em> → <em>"Create API key in new project"</em> — that gives you a fresh quota immediately.'
                         );
                     } else {
-                        // Per-minute rate limit — auto-retry after cooldown
+                        // Per-minute rate limit — auto-retry
                         const retryAfter = parseInt(res.headers.get('Retry-After') || '20', 10);
                         showRateLimit(retryAfter);
                     }
                     return;
                 }
-                throw new Error(msg);
+                showError(`<strong>Error ${httpCode}</strong> — ${apiMsg || 'Unexpected error from Google API.'}`);
             }
 
             const data = await res.json();
