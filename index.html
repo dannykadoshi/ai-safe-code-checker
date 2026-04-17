@@ -12,7 +12,7 @@
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        :root {
+        :root, [data-theme="dark"] {
             --bg:        #0d0d14;
             --bg2:       #13131f;
             --bg3:       #1a1a2e;
@@ -22,13 +22,32 @@
             --pink-glow: rgba(233,30,140,0.2);
             --text:      #e8e8f5;
             --muted:     #8888aa;
+            --header-bg: rgba(13,13,20,0.9);
             --critical:  #ff4444;
             --high:      #ff8c00;
-            --medium:    #f5c518;
+            --medium:    #d4a000;
             --low:       #2ecc71;
             --info:      #3498db;
             --radius:    12px;
             --ease:      cubic-bezier(0.4,0,0.2,1);
+        }
+
+        [data-theme="light"] {
+            --bg:        #f4f4f8;
+            --bg2:       #ffffff;
+            --bg3:       #eaeaf0;
+            --card:      rgba(0,0,0,0.03);
+            --border:    rgba(0,0,0,0.09);
+            --pink:      #e91e8c;
+            --pink-glow: rgba(233,30,140,0.15);
+            --text:      #1a1a2e;
+            --muted:     #666680;
+            --header-bg: rgba(244,244,248,0.92);
+            --critical:  #d32f2f;
+            --high:      #e65100;
+            --medium:    #f57f17;
+            --low:       #2e7d32;
+            --info:      #1565c0;
         }
 
         html { scroll-behavior: smooth; }
@@ -38,18 +57,30 @@
             color: var(--text);
             min-height: 100vh;
             line-height: 1.6;
+            transition: background 0.35s ease, color 0.35s ease;
         }
 
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--pink); border-radius: 3px; }
 
+        /* ── THEME TOGGLE ── */
+        .theme-toggle {
+            background: var(--card); border: 1px solid var(--border);
+            color: var(--muted); width: 36px; height: 36px;
+            border-radius: 50%; cursor: pointer; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.25s ease; flex-shrink: 0;
+        }
+        .theme-toggle:hover { border-color: var(--pink); color: var(--pink); }
+
         /* ── HEADER ── */
         header {
             border-bottom: 1px solid var(--border);
-            background: rgba(13,13,20,0.9);
+            background: var(--header-bg);
             backdrop-filter: blur(20px);
             position: sticky; top: 0; z-index: 100;
+            transition: background 0.35s ease, border-color 0.35s ease;
         }
         .header-inner {
             max-width: 1400px; margin: 0 auto;
@@ -184,18 +215,27 @@
 
         /* example buttons */
         .examples-bar {
-            padding: 0.75rem 1.25rem;
+            padding: 0.875rem 1.25rem;
             border-top: 1px solid var(--border);
+            background: rgba(233,30,140,0.03);
             display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
         }
-        .examples-label { font-size: 0.72rem; color: var(--muted); font-family: 'Fira Code', monospace; margin-right: 0.25rem; }
+        .examples-label {
+            font-size: 0.75rem; color: var(--pink);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600; margin-right: 0.25rem; white-space: nowrap;
+        }
         .example-btn {
-            background: var(--card); border: 1px solid var(--border);
-            color: var(--muted); font-size: 0.72rem; font-family: 'Fira Code', monospace;
-            padding: 0.25rem 0.65rem; border-radius: 6px; cursor: pointer;
+            background: var(--bg3); border: 1px solid var(--border);
+            color: var(--text); font-size: 0.78rem; font-family: 'Fira Code', monospace;
+            padding: 0.35rem 0.85rem; border-radius: 6px; cursor: pointer;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
-        .example-btn:hover { border-color: var(--pink); color: var(--pink); }
+        .example-btn:hover {
+            border-color: var(--pink); color: var(--pink);
+            background: rgba(233,30,140,0.07);
+        }
 
         /* analyze button */
         .analyze-bar {
@@ -421,6 +461,9 @@
             <a href="https://github.com/dannykadoshi/ai-safe-code-checker" target="_blank" rel="noopener" class="header-link">
                 <i class="fab fa-github"></i> GitHub
             </a>
+            <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
         </div>
     </div>
 </header>
@@ -554,6 +597,22 @@
 </footer>
 
 <script>
+    // ── THEME TOGGLE ──────────────────────────────────────
+    function toggleTheme() {
+        const html = document.documentElement;
+        const icon = document.getElementById('theme-icon');
+        const isDark = html.getAttribute('data-theme') !== 'light';
+        html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        localStorage.setItem('checker_theme', isDark ? 'light' : 'dark');
+    }
+    // restore saved theme
+    (function() {
+        const t = localStorage.getItem('checker_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        document.getElementById('theme-icon').className = t === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+    })();
+
     // ── API KEY ────────────────────────────────────────────
     const keyInput = document.getElementById('api-key');
     keyInput.value = localStorage.getItem('gemini_key') || '';
