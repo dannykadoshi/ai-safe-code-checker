@@ -457,17 +457,13 @@
             <span class="logo-text">AI Safe <span>Code</span> Checker</span>
         </a>
         <div class="api-key-wrap">
-            <select class="provider-select" id="provider-select" onchange="onProviderChange()">
-                <option value="gemini">Gemini 2.0 Flash</option>
-                <option value="groq">Groq (Llama 3.3)</option>
-            </select>
-            <span class="api-key-label" id="api-key-label">API Key:</span>
+            <span class="api-key-label">Groq API Key:</span>
             <input type="password" class="api-key-input" id="api-key"
-                   placeholder="Paste your API key (stored locally only)"
+                   placeholder="Paste your key (stored locally only)"
                    oninput="saveKey()">
         </div>
         <div class="header-links">
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="header-link" id="get-key-link">
+            <a href="https://console.groq.com/keys" target="_blank" rel="noopener" class="header-link" id="get-key-link">
                 <i class="fas fa-key"></i> Get free API key
             </a>
             <a href="https://github.com/dannykadoshi/ai-safe-code-checker" target="_blank" rel="noopener" class="header-link">
@@ -482,7 +478,7 @@
 
 <!-- HERO -->
 <div class="hero">
-    <div class="hero-badge"><i class="fas fa-bolt"></i> Powered by Gemini 2.0 Flash &amp; Groq Llama 3.3</div>
+    <div class="hero-badge"><i class="fas fa-bolt"></i> Powered by Groq · Llama 3.3 70B</div>
     <h1>Scan Your Code for <span>Security Risks</span></h1>
     <p>Paste any code snippet and get instant vulnerability analysis, severity ratings, and actionable fix suggestions. Free, open-source, no signup.</p>
     <div class="hero-stats">
@@ -569,13 +565,13 @@
 <!-- HOW IT WORKS -->
 <div class="how-section">
     <h2 class="how-title">How It Works</h2>
-    <p class="how-subtitle">Security analysis in seconds, powered by Google Gemini or Groq — your choice.</p>
+    <p class="how-subtitle">Security analysis in seconds, powered by Groq and Llama 3.3.</p>
     <div class="steps">
         <div class="step">
             <div class="step-num">1</div>
             <div class="step-icon">🔑</div>
             <h3>Add Your API Key</h3>
-            <p>Get a free API key from <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--pink)">Groq</a> (works in EU, no billing) or <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--pink)">Google AI Studio</a>. Stored only in your browser.</p>
+            <p>Get a free Groq API key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--pink)">console.groq.com/keys</a>. No credit card needed. Stored only in your browser — never on any server.</p>
         </div>
         <div class="step">
             <div class="step-num">2</div>
@@ -587,7 +583,7 @@
             <div class="step-num">3</div>
             <div class="step-icon">🤖</div>
             <h3>AI Scans It</h3>
-            <p>Gemini AI analyzes for OWASP Top 10 vulnerabilities, hardcoded secrets, and code quality issues.</p>
+            <p>Groq's Llama 3.3 model analyzes for OWASP Top 10 vulnerabilities, hardcoded secrets, and code quality issues.</p>
         </div>
         <div class="step">
             <div class="step-num">4</div>
@@ -603,7 +599,7 @@
     <p>
         Built by <a href="https://github.com/dannykadoshi" target="_blank">Danni Kadoshi</a> ·
         Open source on <a href="https://github.com/dannykadoshi/ai-safe-code-checker" target="_blank">GitHub</a> ·
-        Powered by <a href="https://ai.google.dev/" target="_blank">Google Gemini</a> ·
+        Powered by <a href="https://groq.com" target="_blank">Groq</a> ·
         Your code never leaves your browser
     </p>
 </footer>
@@ -626,46 +622,9 @@
     })();
 
     // ── PROVIDER + API KEY ────────────────────────────────
-    const providerSelect = document.getElementById('provider-select');
-    const keyInput       = document.getElementById('api-key');
-    const keyLabel       = document.getElementById('api-key-label');
-    const getKeyLink     = document.getElementById('get-key-link');
-
-    const PROVIDERS = {
-        gemini: {
-            label:    'Gemini API Key:',
-            keyStore: 'gemini_key',
-            keyLink:  'https://aistudio.google.com/app/apikey',
-            keyHint:  'Get free key at aistudio.google.com'
-        },
-        groq: {
-            label:    'Groq API Key:',
-            keyStore: 'groq_key',
-            keyLink:  'https://console.groq.com/keys',
-            keyHint:  'Get free key at console.groq.com'
-        }
-    };
-
-    function getProvider() { return providerSelect.value; }
-
-    function onProviderChange() {
-        const p = PROVIDERS[getProvider()];
-        keyLabel.textContent   = p.label;
-        keyInput.value         = localStorage.getItem(p.keyStore) || '';
-        getKeyLink.href        = p.keyLink;
-        getKeyLink.title       = p.keyHint;
-        localStorage.setItem('last_provider', getProvider());
-    }
-
-    // Restore saved provider + key
-    const savedProvider = localStorage.getItem('last_provider') || 'gemini';
-    providerSelect.value = savedProvider;
-    onProviderChange();
-
-    function saveKey() {
-        const p = PROVIDERS[getProvider()];
-        localStorage.setItem(p.keyStore, keyInput.value.trim());
-    }
+    const keyInput = document.getElementById('api-key');
+    keyInput.value = localStorage.getItem('groq_key') || '';
+    function saveKey() { localStorage.setItem('groq_key', keyInput.value.trim()); }
 
     // ── CHAR COUNT ────────────────────────────────────────
     function updateCharCount() {
@@ -824,42 +783,26 @@ ${code}
 \`\`\``;
 
         try {
-            const provider  = getProvider();
-            const p         = PROVIDERS[provider];
-            const apiKey    = localStorage.getItem(p.keyStore) || '';
+            const apiKey = localStorage.getItem('groq_key') || '';
 
             if (!apiKey) {
-                showError('Please paste your ' + p.label.replace(':', '') + ' in the field at the top.');
+                showError('Please paste your Groq API key at the top of the page. <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--pink)">Get a free key →</a>');
                 setLoading(false);
                 return;
             }
 
-            let fetchUrl, fetchBody;
-
-            if (provider === 'gemini') {
-                fetchUrl  = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                fetchBody = JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.2, maxOutputTokens: 4096 }
-                });
-            } else {
-                // Groq — OpenAI-compatible endpoint
-                fetchUrl  = 'https://api.groq.com/openai/v1/chat/completions';
-                fetchBody = JSON.stringify({
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
                     model: 'llama-3.3-70b-versatile',
                     messages: [{ role: 'user', content: prompt }],
                     temperature: 0.2,
                     max_tokens: 4096
-                });
-            }
-
-            const res  = await fetch(fetchUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(provider === 'groq' ? { 'Authorization': `Bearer ${apiKey}` } : {})
-                },
-                body: fetchBody
+                })
             });
 
             // Read body ONCE as text to avoid "body disturbed" errors
@@ -868,57 +811,24 @@ ${code}
             try { bodyJson = JSON.parse(bodyText); } catch(_) {}
 
             if (!res.ok) {
-                const httpCode  = res.status;
-                const apiMsg    = bodyJson?.error?.message || bodyText || `HTTP ${httpCode}`;
-                const apiStatus = bodyJson?.error?.status  || '';
+                const httpCode = res.status;
+                const apiMsg   = bodyJson?.error?.message || bodyText || `HTTP ${httpCode}`;
                 setLoading(false);
 
-                if (httpCode === 400) {
-                    showError(`<strong>400 — Bad Request</strong><br>${apiMsg}`);
-                    return;
-                }
                 if (httpCode === 401 || httpCode === 403) {
-                    showError(
-                        `<strong>${httpCode} — API key rejected</strong><br>${apiMsg}` +
-                        `<br><br>Get a valid key at <a href="${p.keyLink}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">${p.keyLink.replace('https://', '')}</a>`
-                    );
+                    showError('<strong>Invalid API key</strong><br>Check your Groq key or get a new one at <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.groq.com/keys</a>');
                     return;
                 }
                 if (httpCode === 429) {
-                    const msgLow  = apiMsg.toLowerCase();
-                    const isQuota = msgLow.includes('quota') || msgLow.includes('resource') || apiStatus === 'RESOURCE_EXHAUSTED';
-                    if (isQuota) {
-                        const isZeroLimit = msgLow.includes('limit: 0');
-                        if (isZeroLimit) {
-                            showError(
-                                '<strong>Free tier not available in your region (EU/EEA)</strong>' +
-                                '<br><br>Google has set your free quota to 0 due to data regulations. Two options:' +
-                                '<br><br><strong>Option A — Switch to Groq (free, works in EU):</strong>' +
-                                '<br>&nbsp;&nbsp;1. Select <em>Groq (Llama 3.3)</em> from the provider dropdown at the top' +
-                                '<br>&nbsp;&nbsp;2. Get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.groq.com/keys</a>' +
-                                '<br><br><strong>Option B — Enable billing on Google Cloud:</strong>' +
-                                '<br>&nbsp;&nbsp;Go to <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.cloud.google.com/billing</a> and link a billing account (new accounts get $300 free credit)'
-                            );
-                        } else {
-                            showError('<strong>Rate limit / quota exceeded</strong><br>Wait a moment and try again, or switch to Groq from the provider dropdown.');
-                        }
-                    } else {
-                        const retryAfter = parseInt(res.headers.get('Retry-After') || '20', 10);
-                        showRateLimit(retryAfter);
-                    }
+                    const retryAfter = parseInt(res.headers.get('Retry-After') || '20', 10);
+                    showRateLimit(retryAfter);
                     return;
                 }
                 showError(`<strong>Error ${httpCode}</strong> — ${apiMsg}`);
                 return;
             }
 
-            // Extract the text content from whichever provider was used
-            let raw = '';
-            if (provider === 'gemini') {
-                raw = bodyJson?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-            } else {
-                raw = bodyJson?.choices?.[0]?.message?.content || '';
-            }
+            const raw = bodyJson?.choices?.[0]?.message?.content || '';
 
             // Strip markdown fences if model adds them anyway
             const jsonStr = raw.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '').trim();
@@ -1078,7 +988,7 @@ ${code}
             document.getElementById('results-inner').innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon"><i class="fas fa-circle-notch fa-spin"></i></div>
-                    <p>Analyzing your code with Gemini AI...</p>
+                    <p>Analyzing your code with Groq AI...</p>
                 </div>`;
             document.getElementById('results-actions').style.display = 'none';
         }
@@ -1096,8 +1006,8 @@ ${code}
         el.innerHTML = `
             <div class="error-state" id="rate-limit-msg">
                 <i class="fas fa-clock"></i>
-                Gemini free tier rate limit hit. Retrying automatically in <strong id="rl-countdown">${remaining}s</strong>…
-                <br><small style="opacity:0.6;margin-top:0.4rem;display:block">Free tier allows ~15 requests/min. Upgrade at <a href="https://aistudio.google.com" target="_blank" rel="noopener" style="color:inherit">aistudio.google.com</a> for higher limits.</small>
+                Groq rate limit hit. Retrying automatically in <strong id="rl-countdown">${remaining}s</strong>…
+                <br><small style="opacity:0.6;margin-top:0.4rem;display:block">Free tier allows ~30 requests/min. Upgrade at <a href="https://console.groq.com" target="_blank" rel="noopener" style="color:inherit">console.groq.com</a> for higher limits.</small>
             </div>`;
         document.getElementById('results-actions').style.display = 'none';
         const tick = setInterval(() => {
