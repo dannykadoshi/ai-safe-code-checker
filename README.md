@@ -1,33 +1,114 @@
-# AI Safe Code Checker
+# 🛡️ AI Safe Code Checker
 
-## Problem Statement
-The AI Safe Code Checker is a tool designed to analyze code snippets for potential issues, enforce coding standards, and provide suggestions for improvements. It aims to enhance code quality and security by utilizing advanced AI algorithms to detect problematic patterns.
+<div align="center">
 
-## Features
-- **Code Analysis**: Automatically scans code for syntax errors, style violations, and security vulnerabilities.
-- **Real-time Feedback**: Provides instant feedback as you write code, allowing developers to make changes on-the-fly.
-- **Customizable Rules**: Users can define their own coding standards and rules tailored to their project requirements.
-- **Integrations**: Seamlessly integrates with popular IDEs and version control systems for a smooth workflow.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Try_It_Now-e91e8c?style=for-the-badge&logo=googlechrome&logoColor=white)](https://dannykadoshi.github.io/ai-safe-code-checker/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Powered by Gemini](https://img.shields.io/badge/Powered_by-Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![No Backend](https://img.shields.io/badge/No_Backend-100%25_Client_Side-blueviolet?style=for-the-badge)](https://dannykadoshi.github.io/ai-safe-code-checker/)
 
-## Quick Start
-1. **Installation**: 
-   - Clone the repository: `git clone https://github.com/dannykadoshi/ai-safe-code-checker.git`
-   - Navigate to the project directory: `cd ai-safe-code-checker`
-   - Install dependencies: `npm install`
+**Paste your code. Get an instant AI-powered security report. No signup, no installation, no data stored.**
 
-2. **Usage**:
-   - Run the checker: `node index.js <path-to-code-file>`
+[**→ Try it live now**](https://dannykadoshi.github.io/ai-safe-code-checker/)
 
-## Architecture
-The AI Safe Code Checker is built using a modular architecture:
-- **Frontend**: A user-friendly interface for interacting with the tool.
-- **Backend**: Responsible for code analysis and processing using AI algorithms.
-- **Database**: Stores user configurations, custom rules, and historical analysis results.
+</div>
 
-## Roadmap
-- **Q2 2026**: Release Version 1.0 with additional features and enhancements.
-- **Q3 2026**: Integrate machine learning capabilities for smarter analysis.
-- **Q4 2026**: Expand support for more programming languages and frameworks.
+---
+
+## What It Does
+
+AI Safe Code Checker scans your code for security vulnerabilities using Google Gemini AI and returns a prioritized report with:
+
+- **Security score** (0–100) with visual indicator
+- **Severity-rated issues** — Critical / High / Medium / Low / Info
+- **Concrete fix suggestions** for every issue found
+- **OWASP Top 10** vulnerability detection
+- **Positive highlights** — what your code does well
+
+---
+
+## Detects
+
+| Vulnerability | Severity |
+|---|---|
+| SQL Injection | 🔴 Critical |
+| Cross-Site Scripting (XSS) | 🟠 High |
+| Hardcoded credentials & API keys | 🔴 Critical |
+| Broken authentication & session management | 🟠 High |
+| Insecure direct object references (IDOR) | 🟠 High |
+| CSRF vulnerabilities | 🟠 High |
+| Weak cryptography | 🟡 Medium |
+| Command injection | 🔴 Critical |
+| Insecure deserialization | 🟠 High |
+| Missing input validation | 🟡 Medium |
+| Insecure dependencies & patterns | 🟡 Medium |
+| Code quality & best practice violations | 🟢 Low |
+
+---
+
+## Supported Languages
+
+Python · JavaScript · TypeScript · PHP · Java · Go · Rust · C/C++ · Ruby · SQL · Bash · HTML · CSS · and more
+
+---
+
+## How To Use
+
+1. **Get a free Gemini API key** at [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) (no credit card needed)
+2. **Open the tool** at [dannykadoshi.github.io/ai-safe-code-checker](https://dannykadoshi.github.io/ai-safe-code-checker/)
+3. **Paste your API key** into the field at the top (saved to your browser only)
+4. **Paste your code** and select the language
+5. Click **Analyze Code** (or press `Ctrl+Enter`)
+6. Review your security report and copy it as Markdown for PRs or docs
+
+---
+
+## Privacy
+
+- ✅ Your code goes directly from **your browser → Google Gemini API**
+- ✅ No server, no database, no logging
+- ✅ API key stored in `localStorage` — only on your machine
+- ✅ Nothing is stored or tracked anywhere
+
+---
+
+## Run Locally
+
+Just open the file — no build step, no dependencies, no server needed:
+
+```bash
+git clone https://github.com/dannykadoshi/ai-safe-code-checker.git
+cd ai-safe-code-checker
+open index.html
+```
+
+---
+
+## Contributing
+
+Contributions welcome! Ideas for improvement:
+
+- [ ] Syntax highlighting in the code editor
+- [ ] File upload support (drag & drop)
+- [ ] Support for other AI providers (OpenAI, Claude)
+- [ ] Dark / light theme toggle
+- [ ] History of past scans (localStorage)
+- [ ] VS Code extension
+
+Open an issue or submit a PR — all skill levels welcome.
+
+---
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+
+MIT — free to use, modify, and distribute.
+
+---
+
+<div align="center">
+
+Built by [Danni Kadoshi](https://github.com/dannykadoshi) · [Portfolio](https://dannykadoshi.github.io) 
+
+If this helped you, consider giving it a ⭐ — it helps others find it.
+
+</div>
