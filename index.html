@@ -117,6 +117,14 @@
         }
         .api-key-input:focus { border-color: var(--pink); }
         .api-key-input::placeholder { color: var(--muted); }
+        .provider-select {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 0.45rem 0.65rem;
+            color: var(--text); font-size: 0.8rem; font-family: 'Fira Code', monospace;
+            outline: none; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+            transition: border-color 0.25s ease;
+        }
+        .provider-select:focus { border-color: var(--pink); }
 
         .header-links { display: flex; gap: 0.75rem; align-items: center; flex-shrink: 0; }
         .header-link {
@@ -449,13 +457,17 @@
             <span class="logo-text">AI Safe <span>Code</span> Checker</span>
         </a>
         <div class="api-key-wrap">
-            <span class="api-key-label">Gemini API Key:</span>
+            <select class="provider-select" id="provider-select" onchange="onProviderChange()">
+                <option value="gemini">Gemini 2.0 Flash</option>
+                <option value="groq">Groq (Llama 3.3)</option>
+            </select>
+            <span class="api-key-label" id="api-key-label">API Key:</span>
             <input type="password" class="api-key-input" id="api-key"
-                   placeholder="AIza... (stored locally, never sent to our servers)"
+                   placeholder="Paste your API key (stored locally only)"
                    oninput="saveKey()">
         </div>
         <div class="header-links">
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="header-link">
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="header-link" id="get-key-link">
                 <i class="fas fa-key"></i> Get free API key
             </a>
             <a href="https://github.com/dannykadoshi/ai-safe-code-checker" target="_blank" rel="noopener" class="header-link">
@@ -470,7 +482,7 @@
 
 <!-- HERO -->
 <div class="hero">
-    <div class="hero-badge"><i class="fas fa-bolt"></i> Powered by Gemini 2.0 Flash</div>
+    <div class="hero-badge"><i class="fas fa-bolt"></i> Powered by Gemini 2.0 Flash &amp; Groq Llama 3.3</div>
     <h1>Scan Your Code for <span>Security Risks</span></h1>
     <p>Paste any code snippet and get instant vulnerability analysis, severity ratings, and actionable fix suggestions. Free, open-source, no signup.</p>
     <div class="hero-stats">
@@ -557,13 +569,13 @@
 <!-- HOW IT WORKS -->
 <div class="how-section">
     <h2 class="how-title">How It Works</h2>
-    <p class="how-subtitle">Security analysis in seconds, powered by Google Gemini.</p>
+    <p class="how-subtitle">Security analysis in seconds, powered by Google Gemini or Groq — your choice.</p>
     <div class="steps">
         <div class="step">
             <div class="step-num">1</div>
             <div class="step-icon">🔑</div>
             <h3>Add Your API Key</h3>
-            <p>Get a free Gemini API key from Google AI Studio. It's stored only in your browser — never on any server.</p>
+            <p>Get a free API key from <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--pink)">Groq</a> (works in EU, no billing) or <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--pink)">Google AI Studio</a>. Stored only in your browser.</p>
         </div>
         <div class="step">
             <div class="step-num">2</div>
@@ -613,10 +625,47 @@
         document.getElementById('theme-icon').className = t === 'light' ? 'fas fa-sun' : 'fas fa-moon';
     })();
 
-    // ── API KEY ────────────────────────────────────────────
-    const keyInput = document.getElementById('api-key');
-    keyInput.value = localStorage.getItem('gemini_key') || '';
-    function saveKey() { localStorage.setItem('gemini_key', keyInput.value.trim()); }
+    // ── PROVIDER + API KEY ────────────────────────────────
+    const providerSelect = document.getElementById('provider-select');
+    const keyInput       = document.getElementById('api-key');
+    const keyLabel       = document.getElementById('api-key-label');
+    const getKeyLink     = document.getElementById('get-key-link');
+
+    const PROVIDERS = {
+        gemini: {
+            label:    'Gemini API Key:',
+            keyStore: 'gemini_key',
+            keyLink:  'https://aistudio.google.com/app/apikey',
+            keyHint:  'Get free key at aistudio.google.com'
+        },
+        groq: {
+            label:    'Groq API Key:',
+            keyStore: 'groq_key',
+            keyLink:  'https://console.groq.com/keys',
+            keyHint:  'Get free key at console.groq.com'
+        }
+    };
+
+    function getProvider() { return providerSelect.value; }
+
+    function onProviderChange() {
+        const p = PROVIDERS[getProvider()];
+        keyLabel.textContent   = p.label;
+        keyInput.value         = localStorage.getItem(p.keyStore) || '';
+        getKeyLink.href        = p.keyLink;
+        getKeyLink.title       = p.keyHint;
+        localStorage.setItem('last_provider', getProvider());
+    }
+
+    // Restore saved provider + key
+    const savedProvider = localStorage.getItem('last_provider') || 'gemini';
+    providerSelect.value = savedProvider;
+    onProviderChange();
+
+    function saveKey() {
+        const p = PROVIDERS[getProvider()];
+        localStorage.setItem(p.keyStore, keyInput.value.trim());
+    }
 
     // ── CHAR COUNT ────────────────────────────────────────
     function updateCharCount() {
@@ -726,14 +775,9 @@ function resetToken(email) {
     let lastResult = null;
 
     async function analyze() {
-        const apiKey = localStorage.getItem('gemini_key') || '';
-        const code   = document.getElementById('code-input').value.trim();
-        const lang   = document.getElementById('language').value;
+        const code = document.getElementById('code-input').value.trim();
+        const lang = document.getElementById('language').value;
 
-        if (!apiKey) {
-            showError('Please enter your Gemini API key at the top of the page. <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--pink)">Get a free key →</a>');
-            return;
-        }
         if (!code) {
             showError('Please paste some code before analyzing.');
             return;
@@ -780,67 +824,101 @@ ${code}
 \`\`\``;
 
         try {
-            const res = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: { temperature: 0.2, maxOutputTokens: 4096 }
-                    })
-                }
-            );
+            const provider  = getProvider();
+            const p         = PROVIDERS[provider];
+            const apiKey    = localStorage.getItem(p.keyStore) || '';
+
+            if (!apiKey) {
+                showError('Please paste your ' + p.label.replace(':', '') + ' in the field at the top.');
+                setLoading(false);
+                return;
+            }
+
+            let fetchUrl, fetchBody;
+
+            if (provider === 'gemini') {
+                fetchUrl  = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                fetchBody = JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.2, maxOutputTokens: 4096 }
+                });
+            } else {
+                // Groq — OpenAI-compatible endpoint
+                fetchUrl  = 'https://api.groq.com/openai/v1/chat/completions';
+                fetchBody = JSON.stringify({
+                    model: 'llama-3.3-70b-versatile',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.2,
+                    max_tokens: 4096
+                });
+            }
+
+            const res  = await fetch(fetchUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(provider === 'groq' ? { 'Authorization': `Bearer ${apiKey}` } : {})
+                },
+                body: fetchBody
+            });
+
+            // Read body ONCE as text to avoid "body disturbed" errors
+            const bodyText = await res.text();
+            let bodyJson = {};
+            try { bodyJson = JSON.parse(bodyText); } catch(_) {}
 
             if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                const apiMsg   = errData?.error?.message || '';
-                const apiStatus = errData?.error?.status  || '';
                 const httpCode  = res.status;
+                const apiMsg    = bodyJson?.error?.message || bodyText || `HTTP ${httpCode}`;
+                const apiStatus = bodyJson?.error?.status  || '';
                 setLoading(false);
 
                 if (httpCode === 400) {
-                    showError(`<strong>400 — Bad Request</strong><br>${apiMsg || 'Invalid request. Check your API key and try again.'}`);
+                    showError(`<strong>400 — Bad Request</strong><br>${apiMsg}`);
                     return;
                 }
                 if (httpCode === 401 || httpCode === 403) {
-                    showError(`<strong>${httpCode} — API key rejected</strong><br>${apiMsg || 'Your API key is invalid or does not have access to the Generative Language API.'}<br><br>Make sure you enabled the API at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">aistudio.google.com/app/apikey</a>.`);
+                    showError(
+                        `<strong>${httpCode} — API key rejected</strong><br>${apiMsg}` +
+                        `<br><br>Get a valid key at <a href="${p.keyLink}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">${p.keyLink.replace('https://', '')}</a>`
+                    );
                     return;
                 }
                 if (httpCode === 429) {
-                    const msgLow = apiMsg.toLowerCase();
+                    const msgLow  = apiMsg.toLowerCase();
                     const isQuota = msgLow.includes('quota') || msgLow.includes('resource') || apiStatus === 'RESOURCE_EXHAUSTED';
                     if (isQuota) {
                         const isZeroLimit = msgLow.includes('limit: 0');
                         if (isZeroLimit) {
                             showError(
-                                '<strong>Free tier not available in your region</strong>' +
-                                '<br><br>Google has set the free tier quota to <strong>0</strong> for your location — this affects users in the EU/EEA (including Ireland, Germany, France, etc.) due to data regulations.' +
-                                '<br><br><strong>To fix this, enable billing on your Google Cloud project:</strong>' +
-                                '<br>&nbsp;&nbsp;1. Go to <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.cloud.google.com/billing</a>' +
-                                '<br>&nbsp;&nbsp;2. Link a billing account to your project (Google gives $300 free credit to new accounts)' +
-                                '<br>&nbsp;&nbsp;3. Gemini 2.0 Flash is very cheap — roughly $0.10 per 1,000 requests' +
-                                '<br><br><small style="opacity:0.65">Raw error: ' + apiMsg.split('*')[0].trim() + '</small>'
+                                '<strong>Free tier not available in your region (EU/EEA)</strong>' +
+                                '<br><br>Google has set your free quota to 0 due to data regulations. Two options:' +
+                                '<br><br><strong>Option A — Switch to Groq (free, works in EU):</strong>' +
+                                '<br>&nbsp;&nbsp;1. Select <em>Groq (Llama 3.3)</em> from the provider dropdown at the top' +
+                                '<br>&nbsp;&nbsp;2. Get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.groq.com/keys</a>' +
+                                '<br><br><strong>Option B — Enable billing on Google Cloud:</strong>' +
+                                '<br>&nbsp;&nbsp;Go to <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.cloud.google.com/billing</a> and link a billing account (new accounts get $300 free credit)'
                             );
                         } else {
-                            showError(
-                                '<strong>Daily quota exceeded</strong>' +
-                                '<br><br>You\'ve hit the free tier limit for today. It resets at midnight Pacific time.' +
-                                '<br><br>Or go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">aistudio.google.com/app/apikey</a> and create a key in a new project for a fresh quota.'
-                            );
+                            showError('<strong>Rate limit / quota exceeded</strong><br>Wait a moment and try again, or switch to Groq from the provider dropdown.');
                         }
                     } else {
-                        // Per-minute rate limit — auto-retry
                         const retryAfter = parseInt(res.headers.get('Retry-After') || '20', 10);
                         showRateLimit(retryAfter);
                     }
                     return;
                 }
-                showError(`<strong>Error ${httpCode}</strong> — ${apiMsg || 'Unexpected error from Google API.'}`);
+                showError(`<strong>Error ${httpCode}</strong> — ${apiMsg}`);
+                return;
             }
 
-            const data = await res.json();
-            const raw  = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            // Extract the text content from whichever provider was used
+            let raw = '';
+            if (provider === 'gemini') {
+                raw = bodyJson?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            } else {
+                raw = bodyJson?.choices?.[0]?.message?.content || '';
+            }
 
             // Strip markdown fences if model adds them anyway
             const jsonStr = raw.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '').trim();
