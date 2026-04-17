@@ -811,13 +811,24 @@ ${code}
                     const msgLow = apiMsg.toLowerCase();
                     const isQuota = msgLow.includes('quota') || msgLow.includes('resource') || apiStatus === 'RESOURCE_EXHAUSTED';
                     if (isQuota) {
-                        showError(
-                            `<strong>Quota exceeded</strong> — Google says: <em>"${apiMsg}"</em>` +
-                            '<br><br>Even a brand-new key shares the quota of the Google Cloud project it belongs to. ' +
-                            'If the project was used before, the daily quota may already be gone.' +
-                            '<br><br><strong>Fix:</strong> go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">aistudio.google.com/app/apikey</a>, ' +
-                            'click <em>"Create API key"</em> → <em>"Create API key in new project"</em> — that gives you a fresh quota immediately.'
-                        );
+                        const isZeroLimit = msgLow.includes('limit: 0');
+                        if (isZeroLimit) {
+                            showError(
+                                '<strong>Free tier not available in your region</strong>' +
+                                '<br><br>Google has set the free tier quota to <strong>0</strong> for your location — this affects users in the EU/EEA (including Ireland, Germany, France, etc.) due to data regulations.' +
+                                '<br><br><strong>To fix this, enable billing on your Google Cloud project:</strong>' +
+                                '<br>&nbsp;&nbsp;1. Go to <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">console.cloud.google.com/billing</a>' +
+                                '<br>&nbsp;&nbsp;2. Link a billing account to your project (Google gives $300 free credit to new accounts)' +
+                                '<br>&nbsp;&nbsp;3. Gemini 2.0 Flash is very cheap — roughly $0.10 per 1,000 requests' +
+                                '<br><br><small style="opacity:0.65">Raw error: ' + apiMsg.split('*')[0].trim() + '</small>'
+                            );
+                        } else {
+                            showError(
+                                '<strong>Daily quota exceeded</strong>' +
+                                '<br><br>You\'ve hit the free tier limit for today. It resets at midnight Pacific time.' +
+                                '<br><br>Or go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">aistudio.google.com/app/apikey</a> and create a key in a new project for a fresh quota.'
+                            );
+                        }
                     } else {
                         // Per-minute rate limit — auto-retry
                         const retryAfter = parseInt(res.headers.get('Retry-After') || '20', 10);
